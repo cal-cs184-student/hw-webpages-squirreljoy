@@ -28,15 +28,15 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 2 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names: Zishan Wang</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: (TODO) <a href=" https://cal-cs184-student.github.io/hw-webpages-squirreljoy/">cs184.eecs.berkeley.edu/sp25</a>
 
 		<br>
 		
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to GitHub repository: (TODO) <a href="https://github.com/cal-cs184-student/hw-webpages-squirreljoy.git">cs184.eecs.berkeley.edu/sp25</a>
 
 		<figure>
 			<img src="teapot.png" alt="Teapot" style="width:50%"/>
@@ -48,55 +48,147 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		In this assignment, I implemented several key components of mesh processing and curve evaluation.
+		Bezier Curves:
+		2D Bezier Curve: I implemented the de Casteljau algorithm to evaluate a 2D Bezier curve. This involved recursive linear interpolation between control points until a single point was obtained for a given parameter t.
+		3D Bezier Curve: I extended the same concept to 3D by operating on 3D control points, enabling the evaluation of 3D Bezier curves.
+		Vertex Normal Smoothing:
+		I implemented an algorithm to compute vertex normals as an area-weighted average of the normals of the surrounding faces. This helped produce smoother shading results on the mesh by better approximating the actual surface normals at each vertex.
+		Mesh Operations:
+		Edge Flip: I implemented the edge flip operation, which adjusts the connectivity of the mesh by flipping an edge shared by two triangles. 
+		Edge Split: I implemented the edge split operation to refine the mesh by inserting a new vertex on an edge.
+		Loop Subdivision: Building upon edge splits and flips, I implemented Loop subdivision to smooth and refine the entire mesh. This algorithm computes new vertex positions using weighted averages, splits the edges, and flips certain edges to achieve a smoother mesh.
 
-		<h2>Section I: Bezier Curves and Surfaces</h2>
+		Working through this assignment, I noticed that:
+		Local operations like edge flips and splits can affect the overall quality and symmetry of the mesh.
+		Careful debugging and incremental testing are crucial when dealing with complex mesh operations.
+				<h2>Section I: Bezier Curves and Surfaces</h2>
 
 		<h3>Part 1: Bezier curves with 1D de Casteljau subdivision</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		De Casteljau’s algorithm is a recursive method for evaluating a point on a Bezier curve at a given parameter t. The algorithm works by repeatedly performing linear interpolations between adjacent control points until only one point remains; this final point is the point on the curve corresponding to t.
+		In my implementation, I implement a function called evaluateStep that takes a vector of 2D control points as input. For each adjacent pair of points Pi and Pi+1, I compute a new point using the linear interpolation formula:
+		$$\text{newPoint} = (1-t) \cdot P_i + t \cdot P_{i+1}$$
+		I then store all these new points in a new vector and return that vector. By repeatedly calling evaluateStep on the resulting set of points, the algorithm reduces the number of points until only one point remains. This final point is the evaluated point on the Bezier curve for the parameter t.
+
+		In the following figures, I demonstrate the step-by-step evaluation of a Bezier curve using de Casteljau’s algorithm.
 
 		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="1.png" width="400px"/>
+				  <figcaption>Step0</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="3.png" width="400px"/>
+				  <figcaption>Step1</figcaption>
 				</td>
 			  </tr>
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="4.png" width="400px"/>
+				  <figcaption>Step2</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="teapot.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="5.png" width="400px"/>
+				  <figcaption>Step3</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="6.png" width="400px"/>
+				  <figcaption>Step4</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="7.png" width="400px"/>
+				  <figcaption>Step5</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 
-		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<figure>
+			<img src="8.png" alt="Teapot" style="width:50%"/>
+			<figcaption>Bezier curve</figcaption>
+		</figure>
 
+		Then, the following is a screenshot of a slightly different Bezier curve by moving the original control points around and modifying the parameter t.
+		<figure>
+			<img src="10.png" alt="Teapot" style="width:50%"/>
+			<figcaption>You can add images with captions!</figcaption>
+		</figure>
+
+		<h3>Part 2: Bezier surfaces with separable 1D de Casteljau</h3>
+		De Casteljau’s algorithm extends from curves to surfaces by applying the same idea of recursive linear interpolation in two independent parametric directions. In the case of a Bezier surface, we have a two-dimensional grid of control points. The process is as follows:
+		- Interpolate Along One Direction (u-direction):
+		For each row of control points, use the de Casteljau algorithm to compute an intermediate point at the parameter value u. This is implemented in the function evaluate1D, which repeatedly applies the evaluateStep function. For each pair of points, a new point is computed using
+		$$\text{newPoint} = (1-u) \cdot P_i + u \cdot P_{i+1}$$
+		- Interpolate Along the Other Direction (v-direction):
+		After computing the intermediate points for each row, we then have a new set of points that can be interpreted as a one-dimensional Bezier curve in the v direction. Applying the de Casteljau algorithm again on these intermediate points at parameter v yields the final evaluated point on the Bezier surface.
+
+		In my implementation, the de Casteljau algorithm for evaluating Bezier surfaces is divided into three functions: evaluateStep, evaluate1D, and evaluate.
+		- evaluateStep
+		Obtain a new vector of 3D points by linearly interpolating between each pair of adjacent points using the formula 
+		$$\text{newPoint} = (1-t) \cdot P_i + t \cdot P_{i+1}$$
+		- evaluate1D
+		Takes a vector of points and repeatedly applies evaluateStep until only one point remains. The final point represents the evaluation of a one-dimensional Bezier curve at the parameter t.
+		- evaluate:
+		First iterates over the rows of the control point grid. For each row, it calls evaluate1D with the parameter u to obtain an intermediate point. Then, it collects all these intermediate points into a new vector and calls evaluate1D on this vector with the parameter v to find the final point.
+
+		The following is a screenshot of bez/teapot.bezevaluated by my implementation.
+		
 		<h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
 
 		<h3>Part 3: Area-weighted vertex normals</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		In this part, I modified the function Vertex::normal() to implement the area-weighted vertex normals. The implementation computes an approximate unit normal at a vertex by averaging the normals of all triangles incident to the vertex.
+		It starts from one of the halfedges around the vertex. The normal of the face associated with that halfedge is used as the initial value. Then, the algorithm traverses the neighboring halfedges until it returns to the starting halfedge or encounters a boundary. For each valid neighboring face, its normal is added to the accumulated normal vector. Finally, the accumulated normal is normalized and then returned.
 
+		The following are screenshots of dae/teapot.daecomparing teapot shading with and without vertex normals.
+		
 		<h3>Part 4: Edge flip</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		In this part, I modified the function HalfedgeMesh::flipEdge() to implement the edge flip operation.
+		The first step is to ensure that never flipping a boundary edge. This is accomplished by checking if either of the two faces adjacent to the target edge is part of a boundary loop—using the provided isBoundary() function for each mesh element. If either neighbouring face is on the boundary, the function returns immediately without performing any flip.
+		After the check, I retrieve all the relevant halfedges, edges, vertices, and faces from the mesh based on the configuration before the flip (as illustrated on the left side of the diagram), including halfedges, vertices, edges and faces.
+		Next, I update each halfedge’s neighbor pointers after the edge has been flipped (as shown in the diagram on the right). Additionally, I update the corresponding halfedge pointers stored in the edge, vertex, and face data structures.
+		
+		Below are screenshots of the teapot before and after some edge flips.
 
+		During the debugging process, I initially encountered a issue that the flipped edge merging strangely with adjacent edges or flipping to an incorrect location in the mesh. After careful analysis, I realized that in the early version of my code, I set the twin pointers for the halfedges first, and then set the next pointers, which is a wrong order.
+		By revising the code to properly sequence, the edge flip operation began to behave as expected.
+		Also, I tested the revised implementation by repeatedly flipping a single edge. The tests confirmed that the edge consistently flipped correctly.
+		
 		<h3>Part 5: Edge split</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		In this part, I modified the function HalfedgeMesh::splitEdge() to implement the edge split operation.
+		For non-boundary edges, the process is as follows:
+		I begin by retrieving all the relevant mesh elements (halfedges, vertices, edges, and faces) from the pre-split configuration (as illustrated on the left side of the diagram).
+		Next, I create a new vertex m whose position is computed as the average of two appropriate vertex positions.
+		$$m->position = (vb->position + vc->position) / 2$$
+		Finally, I use setNeighbors() to assign the new values for next, twin, vertex, edge, and face pointers for each halfedge. In addition, I update the halfedge pointers stored in the vertices, edges, and faces (as shown in the diagram on the right).
+		
+		Below are screenshots of a mesh before and after some edge splits.
+
+		Below are screenshots of a mesh before and after a combination of both edge splits and edge flips.
+
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		In my implementation of Loop subdivision, the process is divided into several steps as described in the MeshResampler::upsample（） function. 
+		- Repositioning Original Vertices
+		For each vertex in the original mesh, I compute its new position.I traverse around the vertex, accumulate the positions of all neighboring vertices, and compute a weight u based on the valence n. The new vertex position is given by:
+		$$newPosition=(1−n⋅u)⋅position+u⋅(sum of neighboring positions)$$
+		- Computing New Edge Vertex Positions
+		For each edge of the original mesh, I calculate the new vertex position. Given an edge with endpoints a and c, and opposite vertices b and d, the new edge vertex is computed using:
+		$$newPosition=(3(a+c)+(b+d))/8$$
+		- Splitting Original Edges
+		I then split each original edge.During the split, the new vertex’s position is set to the precomputed edge new position.
+		- Flipping New Edges
+		After splitting, some new edges connect an old vertex with a new vertex. These edges are then flipped.
+		- Updating Final Vertex Positions
+		Finally, the new positions computed in the previous steps are copied into the actual vertex positions.
+
+		After applying Loop subdivision, I observed that the originally sharp corners and edges of the mesh become rounded and smoothed out. This smoothing occurs because the subdivision algorithm averages the positions of vertices based on their neighbors.
+		Then  I experimented with pre-splitting some edges before applying the Loop subdivision. The idea is that the pre-split edges provide additional control points that can help maintain the original geometry.
+		Screenshots below comparing mesh with and without pre-splitting clearly show that pre-splitting can mitigate excessive smoothing.
 
 		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
