@@ -74,7 +74,6 @@
 		<br><br>
 		In the following figures, I demonstrate the step-by-step evaluation of a Bezier curve using de Casteljau’s algorithm.<br>
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -224,44 +223,183 @@
 		Next, I create a new vertex m whose position is computed as the average of two appropriate vertex positions.
 		$$m->position = (vb->position + vc->position) / 2$$
 		Finally, I use setNeighbors() to assign the new values for next, twin, vertex, edge, and face pointers for each halfedge. In addition, I update the halfedge pointers stored in the vertices, edges, and faces (as shown in the diagram on the right).
-		
+		<figure>
+			<img src="2.jpg" alt="Teapot" style="width:50%"/>
+			<figcaption>before and after the split</figcaption>
+		</figure>
+
 		Below are screenshots of a mesh before and after some edge splits.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a.png" width="400px"/>
+				  <figcaption>original</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="b.png" width="400px"/>
+				  <figcaption>one edge split</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="c.png" width="400px"/>
+				  <figcaption>seven old edges split</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="d.png" width="400px"/>
+				  <figcaption>details</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="f.png" width="400px"/>
+				  <figcaption>nine edges split including two new edges</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="g.png" width="400px"/>
+				  <figcaption>details</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		Below are screenshots of a mesh before and after a combination of both edge splits and edge flips.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="aa.png" width="400px"/>
+				  <figcaption>original</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="bb.png" width="400px"/>
+				  <figcaption>two edge filpped and one edge split</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 
 		<h3>Part 6: Loop subdivision for mesh upsampling</h3>
-		In my implementation of Loop subdivision, the process is divided into several steps as described in the MeshResampler::upsample（） function. 
-		- Repositioning Original Vertices
-		For each vertex in the original mesh, I compute its new position.I traverse around the vertex, accumulate the positions of all neighboring vertices, and compute a weight u based on the valence n. The new vertex position is given by:
+		In my implementation of Loop subdivision, the process is divided into several steps as described in the MeshResampler::upsample() function. 
+		<br>- Repositioning Original Vertices
+		<br>For each vertex in the original mesh, I compute its new position.I traverse around the vertex, accumulate the positions of all neighboring vertices, and compute a weight u based on the valence n. The new vertex position is given by:
 		$$newPosition=(1−n⋅u)⋅position+u⋅(sum of neighboring positions)$$
-		- Computing New Edge Vertex Positions
-		For each edge of the original mesh, I calculate the new vertex position. Given an edge with endpoints a and c, and opposite vertices b and d, the new edge vertex is computed using:
+		<br>- Computing New Edge Vertex Positions
+		<br>For each edge of the original mesh, I calculate the new vertex position. Given an edge with endpoints a and c, and opposite vertices b and d, the new edge vertex is computed using:
 		$$newPosition=(3(a+c)+(b+d))/8$$
-		- Splitting Original Edges
-		I then split each original edge.During the split, the new vertex’s position is set to the precomputed edge new position.
-		- Flipping New Edges
-		After splitting, some new edges connect an old vertex with a new vertex. These edges are then flipped.
-		- Updating Final Vertex Positions
-		Finally, the new positions computed in the previous steps are copied into the actual vertex positions.
+		<br>- Splitting Original Edges
+		<br>I then split each original edge.During the split, the new vertex’s position is set to the precomputed edge new position.
+		<br>- Flipping New Edges
+		<br>After splitting, some new edges connect an old vertex with a new vertex. These edges are then flipped.
+		<br>- Updating Final Vertex Positions
+		<br>Finally, the new positions computed in the previous steps are copied into the actual vertex positions.
+		<br>
+		<br>After applying Loop subdivision, I observed that the originally sharp corners and edges of the mesh become rounded and smoothed out. This smoothing occurs because the subdivision algorithm averages the positions of vertices based on their neighbors.
+		<br>Then  I experimented with pre-splitting some edges before applying the Loop subdivision. The idea is that the pre-split edges provide additional control points that can help maintain the original geometry.
+		<br>Screenshots below comparing mesh with and without pre-splitting clearly show that pre-splitting can mitigate excessive smoothing.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a1.png" width="400px"/>
+				  <figcaption>mesh without pre-splitting</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="a2.png" width="400px"/>
+				  <figcaption>mesh with pre-splitting</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a3.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="a4.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a5.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="a6.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a7.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="a8.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a9.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="a10.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			</table>
+		</div>
 
-		After applying Loop subdivision, I observed that the originally sharp corners and edges of the mesh become rounded and smoothed out. This smoothing occurs because the subdivision algorithm averages the positions of vertices based on their neighbors.
-		Then  I experimented with pre-splitting some edges before applying the Loop subdivision. The idea is that the pre-split edges provide additional control points that can help maintain the original geometry.
-		Screenshots below comparing mesh with and without pre-splitting clearly show that pre-splitting can mitigate excessive smoothing.
+		
+		<br>After applying several iterations of Loop subdivision, I observed that the cube, although originally perfectly symmetric, became slightly asymmetric after repeated subdivisions. Because each face relies solely on one diagonal, the connectivity of the mesh is inherently uneven. To alleviate this issue, I experimented with pre-processing the cube by pre-splitting the diagonal edges of each face before applying Loop subdivision.
+		<br>By splitting these diagonals, additional control points are introduced into the mesh, leading to a more balanced and uniform topology. This pre-splitting effectively distributes the averaging operations more evenly across each face, helping maintain the original symmetry of the cube during subdivision.
+		<br>Below are screenshots documenting these effects.
 
-		<h2>(Optional) Section III: Potential Extra Credit - Art Competition: Model something Creative</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="z.png" width="400px"/>
+				  <figcaption>mesh without pre-splitting</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="x.png" width="400px"/>
+				  <figcaption>mesh with pre-splitting</figcaption>
+				</td>
+			  </tr>
+			  
+		
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="a7.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="v.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="m.png" width="400px"/>
+				  
+				</td>
+				<td style="text-align: center;">
+				  <img src="n.png" width="400px"/>
+				  
+				</td>
+			  </tr>
+			</table>
+		</div>
 
-		<h2>Additional Notes (please remove)</h2>
-		<ul>
-			<li>You can also add code if you'd like as so: <code>code code code</code></li>
-			<li>If you'd like to add math equations, 
-				<ul>
-					<li>You can write inline equations like so: \( a^2 + b^2 = c^2 \)</li>
-					<li>You can write display equations like so: \[ a^2 + b^2 = c^2 \]</li>
-				</ul>
-			</li>
-		</ul>
+		<br>Initially, after performing Loop subdivision on the cube, I observed that the cube would collapse. I discovered that the problem was due to an error in computing the new positions for the edge vertices. The weighted combination of points was incorrect. After correction, the bug was fixed.
+		<br>Additionally, in the initial implementation of the edge flip operation, I only checked whether one vertex was new and the other was old. However, I observed that some edges that were old were being flipped incorrectly. To fix this, I updated the flip condition to also check that the edge itself is marked as new. 
+
+		
 		</div>
 	</body>
 </html>
