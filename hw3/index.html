@@ -48,39 +48,174 @@
 		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Ray Generation</h3>
+		The overall procedure involves two steps:
+		<ol>
+			<li>Mapping Image Coordinates to Camera Space:<br>
+				The normalized coordinates, where (0,0) corresponds to the bottom-left and (1,1) to the top-right of the image, 
+				are mapped to a corresponding point on the camera sensor.
+				The bottom-left sensor coordinate is \[(-tan(hFov/2),-tan(vFov/2),-1)\]
+				and the top-right is \[(tan(hFov/2),tan(vFov/2),-1)\]
+				Using a simple linear mapping, the sensor coordinates are computed as:
+				\[(bottomleft.x + (top right.x - bottom left.x) * x , bottomleft.y + (topright.y - bottomleft.y) * y, -1)\]
+				And this is the direction of the ray in camera space.
+			</li>
+			<li>Transforming the Ray into World Space:<br>
+				The ray’s origin is the camera position in world space.<br>
+				The ray’s direction is rotated by the camera-to-world rotation matrix (c2w) and then normalized.<br>
+				The ray's t range is initialized with min_t  = nClip and max_t = fClip.<br>
+				Finallly, generate the ray in world space using these parameters.
+			</li>
+		</ol>
 
-		<p>Here is an example 2x2 gridlike structure using an HTML table. Each <b>tr</b> is a row and each <b>td</b> is a column in that row. You might find this useful for framing and showing your result images in an organized fashion.</p>
+		<h3>Primitive Intersection</h3>
+		Once a ray is generated, the renderer tests it against all scene primitives to determine which object the ray intersects first.<br>
+		For each object defined by f(p) = 0, the ray \(r = o + t * d\) intersects the surface only if f(r) = 0 and t > 0. <br>
+		Only Intersection with valid t values are considered. The closest intersection is stored in the ray object to garantee that any further intersection being ignorded.<br>
+		
+		<h3>Triangle intersection algorithm</h3>
+		For each point inside the triangle, the coordinates of the point can be expressed as follows:\[p = v1 + u(v2-v1) + v(v3-v1)\]
+		where u, v are the barycentric coordinates of the point, satisfying that u >= 0, v >= 0, u + v <= 1. <br>
+		I use Möller–Trumbore Algorithm to handle the intersection problem.<br>
+		I defined \(e1 = v2-v1, e2 = v3-v1, P = cross(r.d,e2), det = e1 · P\)
+		The first step is to check whether the ray is parallel to the triangle plane.<br>
+		If det is close to 0, the ray is parallel to the triangle plane and there is no intersection.<br>
+		Otherwise, I compute the barycentric coordinates u and v using the following equations:
+		\[u = (r.o - v1) · P / det\]
+		\[v = r.d · cross((r.o - v1), e1) / det\]
+		Finally, I check whether u and v are in the range [0, 1] and u + v <= 1. If so, the ray intersects the triangle at the point p = v1 + u * e1 + v * e2. <br>
+		Otherwise, the ray does not intersect the triangle.<br>
+		Finally, compute t using the following equation:
+		\[t = e2 · cross((r.o - v1), e1) / det\]
+		If t is in the range [min_t, max_t], the ray intersects the triangle.<br>
+		For updating, the normal is computed using\[n = ((1 - u - v) * n1 + u * n2 + v * n3).unit();\]
+		Additionally, t, bsdf, primitive should be updated.<br>
+		<br>
+
+		<h3>Images with normal shading for a few small .dae files</h3>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="CBspheres 1-4.png" width="400px"/>
+				  <figcaption>CBspheres.</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
-				</td>
-				<td style="text-align: center;">
-				  <img src="cornell.png" width="400px"/>
-				  <figcaption>Caption goes here.</figcaption>
+				  <img src="CBgems.png" width="400px"/>
+				  <figcaption>CBgems.</figcaption>
 				</td>
 			  </tr>
 			</table>
 		</div>
 		
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>BVH construction algorithm</h3>
+		The algorithm begins by computing a bounding box that encloses all the primitives in the current range.<br>
+		If the number of primitives is less than or equal to the maximum leaf size, it creates a leaf node that directly stores these primitives.Otherwise, I considered the node as an inner node. <br>
+		To split the primitives into two groups, I first compared the extents in the x, y, and z directions to find the axis that the bounding box is widest along. 
+		Then, I computes the splitting value as the average of the minimum and maximum coordinates along that axis.
+		The primitives are partitioned into two groups based on whether their centroid’s coordinate along the chosen axis is less than or equal to this mid value. 
+		If all primitives end up on one side, to avoid infinite recursion (for one of the child node is the same as the parent node), I split the range at the median index.
+		Finally, it recursively builds the left and right subtrees using the same strategy until all primitives are assigned to leaf nodes.<br>
+
+		<h3>Images with normal shading for a few large .dae files</h3>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="maxplanck.png" width="400px"/>
+				  <figcaption>maxplanck.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="peter.png" width="400px"/>
+				  <figcaption>peter.</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBlucy.png" width="400px"/>
+				  <figcaption>CBlucy.</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="wall-e.png" width="400px"/>
+				  <figcaption>wall-e.</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		
+
+		<h3>Comparision of rendering times on a few scenes with moderately complex geometries with and without BVH acceleration</h3>
+		In my tests on moderately complex scenes, maxplanck took around five minutes to render without BVH acceleration, and CBlucy required even longer. 
+		However, when using BVH acceleration, both renderers completed the same scenes in just a few seconds. 
+		Without BVH acceleration, we need to check the intersection of the ray with all the primitives in the scene, and the computation of intersection is very time-consuming. 
+		With BVH acceleration, we can traverse down to find the target leaf node and only need a few computation to find the intersection for there is only a small number of prmitives. <br>
 
 		<h2>Part 3: Direct Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Uniform Hemisphere Sampling Implementation</h3>
+		This method uses Monte Carlo Integration, estimating direct lighting by randomly sampling directions uniformly across the hemisphere above the intersection point. 
+		It checks whether these sampled directions intersect lights in the scene. If do, compute the contribution.<br>
+		First, this method randomly samples a direction wi uniformly on the hemisphere and converts it from local to world space.<br>
+		Then, casts a ray in this sampled direction to test if it hits lights, and if so, add up the contribution.\[L_{out} += intersec.bsdf->getemission() * isect.bsdf->f(w_out,wi) * costheta(wi)\]
+		Finally, averages the accumulated contributions over all samples and multiplies by 2π to approximate the integral over the hemisphere.<br>
+
+		<h3>Importance Sampling Implementation</h3>
+		This method improves efficiency by directly sampling directions toward lights rather than uniformly sampling the hemisphere. Also uses Monte Carlo Integration.<br>
+		The method loops over every light source in the scene, performing multiple samples per area light (ns_area_light) but only a single sample per point light (delta light)
+		For each sample directing toward a target light, I transforms the sampled direction to local space and verifies if it's above the surface. Directions below the surface do not contribute.<br>
+		Then, Constructs a shadow ray to test if the sampled direction is obstructed by other geometry. If nothing obstructs this ray, the sampled direction contributes illumination.<br>
+		Add up the contribution from a single sample using the following equation:\[L_{light} += light->sampleL() * isect.bsdf->f(w_{out}, wi) / pdf\]
+		And the contribution of a single light is \[L_{light}/nsamples\]
+		Add all the contributions from all lights together to approximate the integral.<br>
+
+		<h3>Images rendered with both implementations of the direct lighting function</h3>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_H_64_32.png" width="400px"/>
+				  <figcaption>Uniform Hemisphere Sampling s = 64, l = 32</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_64_32.png" width="400px"/>
+				  <figcaption>Importance Sampling s = 64, l = 32</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		Apparently, the image rendered with importance sampling is much smoother than the one rendered with uniform hemisphere sampling.<br>
+
+		<h3>Compare the noise levels in soft shadows using importance sampling</h3>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_l1.png" width="400px"/>
+				  <figcaption>s = 1, l = 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_l4.png" width="400px"/>
+				  <figcaption>s = 1, l = 4</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+					<img src="CBbunny_l16.png" width="400px"/>
+					<figcaption>s = 1, l = 16</figcaption>
+				  </td>
+				  <td style="text-align: center;">
+					<img src="CBbunny_l64.png" width="400px"/>
+					<figcaption>s = 1, l = 64</figcaption>
+				  </td>
+			  </tr>
+			</table>
+		</div>
+		<br>
+		As we can see above, for the scene CBbunny, the noise levels in the soft shadow regions significantly decreased as the number of light rays increased.	
+
+		<h3>Comparision between the results of uniform hemisphere sampling and lighting sampling</h3>
+		Uniform hemisphere sampling produces significantly more noise, especially noticeable in soft-shadow regions.<br>
+		Importance sampling yields smoother results with less noise, as it focuses on the light sources, leading to more accurate estimates of direct lighting.<br>
 
 		<h2>Part 4: Global Illumination</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
