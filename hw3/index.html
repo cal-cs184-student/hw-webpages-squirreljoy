@@ -185,6 +185,7 @@
 			  </tr>
 			</table>
 		</div>
+		<br
 		Apparently, the image rendered with importance sampling is much smoother than the one rendered with uniform hemisphere sampling.<br>
 
 		<h3>Compare the noise levels in soft shadows using importance sampling</h3>
@@ -228,6 +229,7 @@
 
 		<h3>Global Illumination Renderings</h3>
 		Below are some images rendered with global illuminationc(1024 samples per pixel)<br>
+		<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -318,6 +320,7 @@
 
 		<h3>The Russian Roulette rendering</h3>
 		Below shows the Russian Roulette rendering, where max_ray_depth = 0, 1, 2, 3, 4, 100. (1024 samples per pixel)<br>
+		<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -346,7 +349,7 @@
 				  <figcaption>m = 4</figcaption>
 				</td>
 				<td style="text-align: center;">
-				  <img src="CBlucy_RR_m100.png" width="400px"/>
+				  <img src="CBbunny_RR_m100.png" width="400px"/>
 				  <figcaption>m = 100</figcaption>
 				</td>
 			  </tr>
@@ -355,6 +358,7 @@
 
 		<h3>Effect of Sample-Per-Pixel Rates</h3>
 		Below are images rendered with various sample-per-pixel rates, including 1, 2, 4, 8, 16, 64, and 1024, using 4 light rays.
+		<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -416,6 +420,7 @@
 		<h3>Adaptive Sampling Renderings</h3>
 		The sample rate images clearly show that adaptive sampling adjusts the number of samples depending on the image region. 
 		Areas with higher variance or more complex details receive more samples, while simpler regions converge quickly with fewer samples. <br>
+		<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -427,6 +432,8 @@
 				  <img src="CBbunny_adaptive_rate.png" width="400px"/>
 				  <figcaption>CBbunny_rate</figcaption>
 				</td>
+			  </tr>
+			  <tr>
 				<td style="text-align: center;">
 					<img src="CBspheres_adaptive.png" width="400px"/>
 					<figcaption>CBspheres</figcaption>
