@@ -47,7 +47,10 @@
 		-->
 
 		<h2>Overview</h2>
-		Give a high-level overview of what you implemented in this homework. Think about what you've built as a whole. Share your thoughts on what interesting things you've learned from completing the homework.
+		In this assignment, We built a path tracer that implements ray generation, triangle intersection, and a BVH acceleration structure to efficiently handle complex scenes.<br>
+
+		We explored both direct lighting with comparisons between uniform hemisphere and light sampling and global illumination using recursive bounce calculations and Russian Roulette.
+		We also integrated adaptive sampling to optimize rendering quality and performance.
 
 		<h2>Part 1: Ray Generation and Scene Intersection</h2>
 		<h3>Ray Generation</h3>
@@ -78,14 +81,14 @@
 		<h3>Triangle intersection algorithm</h3>
 		For each point inside the triangle, the coordinates of the point can be expressed as follows:\[p = v1 + u(v2-v1) + v(v3-v1)\]
 		where u, v are the barycentric coordinates of the point, satisfying that u >= 0, v >= 0, u + v <= 1. <br>
-		I use Möller–Trumbore Algorithm to handle the intersection problem.<br>
-		I defined \(e1 = v2-v1, e2 = v3-v1, P = cross(r.d,e2), det = e1 · P\)
+		We use Möller–Trumbore Algorithm to handle the intersection problem.<br>
+		We defined \(e1 = v2-v1, e2 = v3-v1, P = cross(r.d,e2), det = e1 · P\)
 		The first step is to check whether the ray is parallel to the triangle plane.<br>
 		If det is close to 0, the ray is parallel to the triangle plane and there is no intersection.<br>
-		Otherwise, I compute the barycentric coordinates u and v using the following equations:
+		Otherwise, we compute the barycentric coordinates u and v using the following equations:
 		\[u = (r.o - v1) · P / det\]
 		\[v = r.d · cross((r.o - v1), e1) / det\]
-		Finally, I check whether u and v are in the range [0, 1] and u + v <= 1. If so, the ray intersects the triangle at the point p = v1 + u * e1 + v * e2. <br>
+		Finally, we check whether u and v are in the range [0, 1] and u + v <= 1. If so, the ray intersects the triangle at the point p = v1 + u * e1 + v * e2. <br>
 		Otherwise, the ray does not intersect the triangle.<br>
 		Finally, compute t using the following equation:
 		\[t = e2 · cross((r.o - v1), e1) / det\]
@@ -113,11 +116,11 @@
 		<h2>Part 2: Bounding Volume Hierarchy</h2>
 		<h3>BVH construction algorithm</h3>
 		The algorithm begins by computing a bounding box that encloses all the primitives in the current range.<br>
-		If the number of primitives is less than or equal to the maximum leaf size, it creates a leaf node that directly stores these primitives.Otherwise, I considered the node as an inner node. <br>
-		To split the primitives into two groups, I first compared the extents in the x, y, and z directions to find the axis that the bounding box is widest along. 
-		Then, I computes the splitting value as the average of the minimum and maximum coordinates along that axis.
-		The primitives are partitioned into two groups based on whether their centroid’s coordinate along the chosen axis is less than or equal to this mid value. 
-		If all primitives end up on one side, to avoid infinite recursion (for one of the child node is the same as the parent node), I split the range at the median index.
+		If the number of primitives is less than or equal to the maximum leaf size, it creates a leaf node that directly stores these primitives.Otherwise, we considered the node as an inner node. <br>
+		To split the primitives into two groups, we first compared the extents in the x, y, and z directions to find the axis that the bounding box is widest along. 
+		Then, we computes the splitting value as the average of the minimum and maximum coordinates along that axis.
+		The primitives are partitioned into two groups based on whether their centroid's coordinate along the chosen axis is less than or equal to this mid value. 
+		If all primitives end up on one side, to avoid infinite recursion (for one of the child node is the same as the parent node), we split the range at the median index.
 		Finally, it recursively builds the left and right subtrees using the same strategy until all primitives are assigned to leaf nodes.<br>
 
 		<h3>Images with normal shading for a few large .dae files</h3>
@@ -164,7 +167,7 @@
 		<h3>Importance Sampling Implementation</h3>
 		This method improves efficiency by directly sampling directions toward lights rather than uniformly sampling the hemisphere. Also uses Monte Carlo Integration.<br>
 		The method loops over every light source in the scene, performing multiple samples per area light (ns_area_light) but only a single sample per point light (delta light)
-		For each sample directing toward a target light, I transforms the sampled direction to local space and verifies if it's above the surface. Directions below the surface do not contribute.<br>
+		For each sample directing toward a target light, we transforms the sampled direction to local space and verifies if it's above the surface. Directions below the surface do not contribute.<br>
 		Then, Constructs a shadow ray to test if the sampled direction is obstructed by other geometry. If nothing obstructs this ray, the sampled direction contributes illumination.<br>
 		Add up the contribution from a single sample using the following equation:\[L_{light} += light->sampleL() * isect.bsdf->f(w_{out}, wi) / pdf\]
 		And the contribution of a single light is \[L_{light}/nsamples\]
@@ -223,8 +226,8 @@
 		<h2>Part 4: Global Illumination</h2>
 		<h3>Implementation of the indirect lighting function</h3>
 		The total contribution is composed of two parts: the direct lighting contribution and the indirect lighting contribution.<br>
-		For the indirect lighting contribution, I use a recursive function depending on Russian Roulette to randomly decide whether to continue and return the accumulated contribution of current bounce and later bounces.
-		For each bounce, I applied Monte Carlo Integration to sample. Then scale the contribution by 1/countunueProbability to maintain an unbiased estimate.<br>
+		For the indirect lighting contribution, we use a recursive function depending on Russian Roulette to randomly decide whether to continue and return the accumulated contribution of current bounce and later bounces.
+		For each bounce, we applied Monte Carlo Integration to sample. Then scale the contribution by 1/countunueProbability to maintain an unbiased estimate.<br>
 		This approach efficiently handles the potentially infinite path lengths in global illumination by terminating paths probabilistically while keeping the overall estimator unbiased.<br>
 
 		<h3>Global Illumination Renderings</h3>
