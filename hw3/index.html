@@ -28,17 +28,19 @@
 	<body>
 		<div class="container">
 		<h1>CS184/284A Spring 2025 Homework 3 Write-Up</h1>
-		<div style="text-align: center;">Names: </div>
+		<div style="text-align: center;">Names: Zishan Wang</div>
 
 		<br>
 
-		Link to webpage: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
-		Link to GitHub repository: (TODO) <a href="https://cs184.eecs.berkeley.edu/sp25">cs184.eecs.berkeley.edu/sp25</a>
+		Link to webpage: <a href="https://cs184.eecs.berkeley.edu/sp25">https://cal-cs184-student.github.io/hw-webpages-squirreljoy/hw3/index.html</a>
+		Link to GitHub repository:<a href="https://cs184.eecs.berkeley.edu/sp25">https://github.com/cal-cs184-student/sp25-hw3-squirrel3.git</a>
 		
+		<!--
 		<figure>
 			<img src="cornell.png" alt="Cornell Boxes with Bunnies" style="width:70%"/>
 			<figcaption>You can add images with captions!</figcaption>
 		</figure>
+	-->
 
 		<!--
 		We've already added one heading per part, to make your write-up as navigable when grading. Please fit your write-up within these sections!
@@ -218,11 +220,74 @@
 		Importance sampling yields smoother results with less noise, as it focuses on the light sources, leading to more accurate estimates of direct lighting.<br>
 
 		<h2>Part 4: Global Illumination</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		<h3>Implementation of the indirect lighting function</h3>
+		The total contribution is composed of two parts: the direct lighting contribution and the indirect lighting contribution.<br>
+		For the indirect lighting contribution, I use a recursive function depending on Russian Roulette to randomly decide whether to continue and return the accumulated contribution of current bounce and later bounces.
+		For each bounce, I applied Monte Carlo Integration to sample. Then scale the contribution by 1/countunueProbability to maintain an unbiased estimate.<br>
+		This approach efficiently handles the potentially infinite path lengths in global illumination by terminating paths probabilistically while keeping the overall estimator unbiased.<br>
+
+		<h3>Global Illumination Renderings</h3>
+		Below are some images rendered with global illumination<br>??????????????????????
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_42.png" width="400px"/>
+				  <figcaption>CBbunny</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy_42.png" width="400px"/>
+				  <figcaption>CBlucy</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
+
+		<h3>Comparison between direct and indirect illumination</h3>
+
+
+		<h3>The mth bounce of light rendering</h3>
+
+
+
+
+		<h3>The Russian Roulette rendering</h3>
+
+
+
+		<h3>Effect of Sample-Per-Pixel Rates</h3>
+
+
+
 
 		<h2>Part 5: Adaptive Sampling</h2>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+		Adaptive sampling dynamically decide how many samples to trace for pixel based on the pixel's convergence.
+		When a pixel's estimated illuminance is stable enough, the sampling process stops earlier.
+		Thus, it can speeds up rendering by reduing the number of samples for pixels that have already converged.
 
+		<h3>Adaptive Sampling Implementation</h3>
+		The algorithm maintains two accumulators: \(s1\) for the cumulative sum of the illuminance values and \(s2\) for the cumulative sum of the squared illuminance values.<br>
+		Then, we can compute the mean and variance by:\[mean = s1 / n\] and \[var = (s2 - s1/n^2) / (n - 1)\].<br>
+		Where n is the number of samples taken so far.<br>
+
+		Afer that, we compute the uncertainty in the mean estimation of the pixel's illuminance.\[I = 1.96 * sqrt(variance) / sqrt(n)\]
+		If \(I <= maxTolerance * mean\), it indicates that the pixel's color has converged.
+		The idea is to use the concept of a confidence interval from statistics. And we use the factor 1.96 for a 95% confidence interval.<br>
+		
+		During the process, we divided samples into batches to avooid overhead of checking per single sample.<br>
+
+		<h3>Adaptive Sampling Renderings</h3>
+		The sample rate images clearly show that adaptive sampling adjusts the number of samples depending on the image region. 
+		Areas with higher variance or more complex details receive more samples, while simpler regions converge quickly with fewer samples. <br>
+
+		
+		
+		
+		
+		
+		
+		
+		
 		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		
