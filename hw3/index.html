@@ -151,7 +151,7 @@
 		
 
 		<h3>Comparision of rendering times on a few scenes with moderately complex geometries with and without BVH acceleration</h3>
-		In my tests on moderately complex scenes, maxplanck took around five minutes to render without BVH acceleration, and CBlucy required even longer. 
+		In our tests on moderately complex scenes, maxplanck took around five minutes to render without BVH acceleration, and CBlucy required even longer. 
 		However, when using BVH acceleration, both renderers completed the same scenes in just a few seconds. 
 		Without BVH acceleration, we need to check the intersection of the ray with all the primitives in the scene, and the computation of intersection is very time-consuming. 
 		With BVH acceleration, we can traverse down to find the target leaf node and only need a few computation to find the intersection for there is only a small number of prmitives. <br>
