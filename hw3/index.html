@@ -227,7 +227,7 @@
 		This approach efficiently handles the potentially infinite path lengths in global illumination by terminating paths probabilistically while keeping the overall estimator unbiased.<br>
 
 		<h3>Global Illumination Renderings</h3>
-		Below are some images rendered with global illumination<br>??????????????????????
+		Below are some images rendered with global illuminationc(1024 samples per pixel)<br>
 		<div style="display: flex; flex-direction: column; align-items: center;">
 			<table style="width: 100%; text-align: center; border-collapse: collapse;">
 			  <tr>
@@ -247,16 +247,153 @@
 
 
 		<h3>The mth bounce of light rendering</h3>
-
+		The right column shows the mth bounce of light rendering, where max_ray_depth = 0, 1, 2, 3, 4, 5.<br>
+		The left column shows the accumulated m bounces of light rendering, where max_ray_depth = 0, 1, 2, 3, 4, 5.<br>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m0_single.png" width="400px"/>
+				  <figcaption>m = 0 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m0.png" width="400px"/>
+				  <figcaption>m = 0 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m1_single.png" width="400px"/>
+				  <figcaption>m = 1 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="CBbunny_m1.png" width="400px"/>
+					<figcaption>m = 1 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m2_single.png" width="400px"/>
+				  <figcaption>m = 2 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="CBbunny_m2.png" width="400px"/>
+					<figcaption>m = 2 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m3_single.png" width="400px"/>
+				  <figcaption>m = 3 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="CBbunny_m3.png" width="400px"/>
+					<figcaption>m = 3 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m4_single.png" width="400px"/>
+				  <figcaption>m = 4 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="CBbunny_m4.png" width="400px"/>
+					<figcaption>m = 4 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_m5_single.png" width="400px"/>
+				  <figcaption>m = 5 isAccumBounces = false</figcaption>
+				</td>
+				<td style="text-align: center;">
+					<img src="CBbunny_m5.png" width="400px"/>
+					<figcaption>m = 5 isAccumBounces = true</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 
 
 		<h3>The Russian Roulette rendering</h3>
-
-
+		Below shows the Russian Roulette rendering, where max_ray_depth = 0, 1, 2, 3, 4, 100. (1024 samples per pixel)<br>
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_RR_m0.png" width="400px"/>
+				  <figcaption>m = 0</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy_RR_m1.png" width="400px"/>
+				  <figcaption>m = 1</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_RR_m2.png" width="400px"/>
+				  <figcaption>m = 2</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy_RR_m3.png" width="400px"/>
+				  <figcaption>m = 3</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_RR_m4.png" width="400px"/>
+				  <figcaption>m = 4</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy_RR_m100.png" width="400px"/>
+				  <figcaption>m = 100</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 
 		<h3>Effect of Sample-Per-Pixel Rates</h3>
-
+		Below are images rendered with various sample-per-pixel rates, including 1, 2, 4, 8, 16, 64, and 1024, using 4 light rays.
+		<div style="display: flex; flex-direction: column; align-items: center;">
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s1.png" width="400px"/>
+				  <figcaption>s = 1</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s2.png" width="400px"/>
+				  <figcaption>s = 2</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s4.png" width="400px"/>
+				  <figcaption>s = 4</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s8.png" width="400px"/>
+				  <figcaption>s = 8</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s16.png" width="400px"/>
+				  <figcaption>s = 16</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s64.png" width="400px"/>
+				  <figcaption>s = 64</figcaption>
+				</td>
+			  </tr>
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_s1024.png" width="400px"/>
+				  <figcaption>s = 1024</figcaption>
+				</td>
+			  </tr>
+			</table>
 
 
 
@@ -267,7 +404,7 @@
 
 		<h3>Adaptive Sampling Implementation</h3>
 		The algorithm maintains two accumulators: \(s1\) for the cumulative sum of the illuminance values and \(s2\) for the cumulative sum of the squared illuminance values.<br>
-		Then, we can compute the mean and variance by:\[mean = s1 / n\] and \[var = (s2 - s1/n^2) / (n - 1)\].<br>
+		Then, we can compute the mean and variance by:\[mean = s1 / n\] and \[variance = (s2 - s1/n^2) / (n - 1)\].<br>
 		Where n is the number of samples taken so far.<br>
 
 		Afer that, we compute the uncertainty in the mean estimation of the pixel's illuminance.\[I = 1.96 * sqrt(variance) / sqrt(n)\]
@@ -279,15 +416,22 @@
 		<h3>Adaptive Sampling Renderings</h3>
 		The sample rate images clearly show that adaptive sampling adjusts the number of samples depending on the image region. 
 		Areas with higher variance or more complex details receive more samples, while simpler regions converge quickly with fewer samples. <br>
-
+		<div style="display: flex; flex-direction: column; align-items: center;">?????????
+			<table style="width: 100%; text-align: center; border-collapse: collapse;">
+			  <tr>
+				<td style="text-align: center;">
+				  <img src="CBbunny_adaptive.png" width="400px"/>
+				  <figcaption>CBbunny</figcaption>
+				</td>
+				<td style="text-align: center;">
+				  <img src="CBlucy_adaptive.png" width="400px"/>
+				  <figcaption>CBlucy</figcaption>
+				</td>
+			  </tr>
+			</table>
+		</div>
 		
-		
-		
-		
-		
-		
-		
-		
+		<!--
 		<h2>(Optional) Part 6: Extra Credit Opportunities</h2>
 		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 		
@@ -301,6 +445,7 @@
 				</ul>
 			</li>
 		</ul>
+		-->
 		</div>
 	</body>
 </html>
